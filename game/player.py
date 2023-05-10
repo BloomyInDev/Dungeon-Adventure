@@ -124,7 +124,7 @@ class Player:
             _,x,y = Player.isInTeleportZone(x,y)
         # Player's equipement change
         if pyxel.btnv(pyxel.MOUSE_WHEEL_Y):
-            print(pyxel.mouse_wheel)
+            #print(pyxel.mouse_wheel)
             if pyxel.mouse_wheel>0:
                 if len(__main__.player["equipement"]["list"])-1==__main__.player["equipement"]["inhand"]:
                     __main__.player["equipement"]["inhand"]=0
@@ -135,21 +135,21 @@ class Player:
                     __main__.player["equipement"]["inhand"]=len(__main__.player["equipement"]["list"])-1
                 else:
                     __main__.player["equipement"]["inhand"]-=1
-            print(__main__.player["equipement"]["list"][__main__.player["equipement"]["inhand"]])
+            #print(__main__.player["equipement"]["list"][__main__.player["equipement"]["inhand"]])
         if (pyxel.btn(pyxel.GAMEPAD1_BUTTON_LEFTSHOULDER) or pyxel.btn(pyxel.KEY_E) or pyxel.btn(pyxel.GAMEPAD1_BUTTON_X)) and pyxel.frame_count-__main__.lastestchangeitem>delaybetweenchanges:
             __main__.lastestchangeitem = pyxel.frame_count
             if __main__.player["equipement"]["inhand"]==0:
                 __main__.player["equipement"]["inhand"]=len(__main__.player["equipement"]["list"])-1
             else:
                 __main__.player["equipement"]["inhand"]-=1
-            print(__main__.player["equipement"]["list"][__main__.player["equipement"]["inhand"]])
+            #print(__main__.player["equipement"]["list"][__main__.player["equipement"]["inhand"]])
         if (pyxel.btn(pyxel.GAMEPAD1_BUTTON_RIGHTSHOULDER) or pyxel.btn(pyxel.KEY_R) or pyxel.btn(pyxel.GAMEPAD1_BUTTON_Y)) and pyxel.frame_count-__main__.lastestchangeitem>delaybetweenchanges:
             __main__.lastestchangeitem = pyxel.frame_count
             if len(__main__.player["equipement"]["list"])-1==__main__.player["equipement"]["inhand"]:
                 __main__.player["equipement"]["inhand"]=0
             else:
                 __main__.player["equipement"]["inhand"]+=1
-            print(__main__.player["equipement"]["list"][__main__.player["equipement"]["inhand"]])
+            #print(__main__.player["equipement"]["list"][__main__.player["equipement"]["inhand"]])
         # Player's sword
         if (pyxel.btn(pyxel.MOUSE_BUTTON_LEFT) or pyxel.btn(pyxel.KEY_SPACE) or pyxel.btn(pyxel.GAMEPAD1_BUTTON_A) or pyxel.btnv(pyxel.GAMEPAD1_AXIS_TRIGGERRIGHT)>deadzone) and Player.colidingChest(x,y,chestscene['state']):
             chestscene = Player.lootChest(chestscene)

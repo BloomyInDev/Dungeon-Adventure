@@ -85,7 +85,7 @@ def update():
         if player["equipement"]["list"][player["equipement"]["inhand"]] == "pistol":
             if (pyxel.frame_count//60)%5==1 and tick == 0:
                 player["equipement"]["specialvar"]["ammo"]+=1
-                print('Ammo now at',player["equipement"]["specialvar"]["ammo"])
+                #print('Ammo now at',player["equipement"]["specialvar"]["ammo"])
             i=0
             while i<len(player["equipement"]["specialvar"]["listbullet"]):
                 bullet = player["equipement"]["specialvar"]["listbullet"][i]
@@ -148,7 +148,7 @@ def draw():
     pyxel.text(64-(2*len(str(zone))),16,str(zone-1),1)
     # Life
     pyxel.blt(0,129,0,0,35,16,7,0)
-    if player["life"]<=4: pyxel.blt(0,129,0,0,42,4*player["life"],7,0)
+    if 0<=player["life"]<=4: pyxel.blt(0,129,0,0,42,4*player["life"],7,0)
     else: pyxel.blt(0,129,0,0,42,16,7,0)
     pyxel.text(3,130,str(player["life"]),2)
     # Ammo/Use of equipement
@@ -161,7 +161,6 @@ def draw():
             pyxel.blt(15,129,0,0,49,16,7,0)
     else:
         # Ammo countdown
-        
         if player["equipement"]["specialvar"]["ammo"]<21:
             pyxel.blt(15,129,0,0,49,(player["equipement"]["specialvar"]["ammo"]//1.5),7,0)
         else:
