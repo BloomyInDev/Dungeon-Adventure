@@ -147,7 +147,6 @@ def draw():
     pyxel.rect(0,128,128,9,1)
     pyxel.text(64-(2*len(str(zone))),16,str(zone-1),1)
     # Life
-    
     pyxel.blt(0,129,0,0,35,16,7,0)
     if player["life"]<=4: pyxel.blt(0,129,0,0,42,4*player["life"],7,0)
     else: pyxel.blt(0,129,0,0,42,16,7,0)
@@ -169,6 +168,23 @@ def draw():
             pyxel.blt(15,129,0,0,49,16,7,0)
         pyxel.text(18,130,str(player["equipement"]["specialvar"]["ammo"]),5)
     pyxel.text(97-(6*len(str(player["score"]))),130,str('Score : '+str(player["score"])),7)
+    # Objects in inv
+    xcords = 48
+    objpos = {}
+    for objects in player["equipement"]["list"]:
+        match objects:
+            case "sword":
+                objpos["sword"]=xcords
+                pyxel.blt(xcords,129,1,0,16,6,6,0)
+            case "dsword":
+                objpos["dsword"]=xcords
+                pyxel.blt(xcords,129,1,16,16,6,6,0)
+            case "pistol":
+                objpos["pistol"]=xcords
+                pyxel.blt(xcords,129,1,8,16,6,6,0)
+        xcords+=9
+    pyxel.rect(objpos[player["equipement"]["list"][player["equipement"]["inhand"]]],136,7,1,7)
+    
     ### Walls
     match scenary["chest"]["state"]:
         case 1:

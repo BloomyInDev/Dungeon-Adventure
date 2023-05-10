@@ -151,10 +151,10 @@ class Player:
                 __main__.player["equipement"]["inhand"]+=1
             print(__main__.player["equipement"]["list"][__main__.player["equipement"]["inhand"]])
         # Player's sword
-        if (pyxel.btn(pyxel.KEY_SPACE) or pyxel.btn(pyxel.GAMEPAD1_BUTTON_A) or pyxel.btnv(pyxel.GAMEPAD1_AXIS_TRIGGERRIGHT)>deadzone) and Player.colidingChest(x,y,chestscene['state']):
+        if (pyxel.btn(pyxel.MOUSE_BUTTON_LEFT) or pyxel.btn(pyxel.KEY_SPACE) or pyxel.btn(pyxel.GAMEPAD1_BUTTON_A) or pyxel.btnv(pyxel.GAMEPAD1_AXIS_TRIGGERRIGHT)>deadzone) and Player.colidingChest(x,y,chestscene['state']):
             chestscene = Player.lootChest(chestscene)
             equipement = 0
-        elif (pyxel.btn(pyxel.KEY_SPACE) or pyxel.btn(pyxel.GAMEPAD1_BUTTON_A) or pyxel.btnv(pyxel.GAMEPAD1_AXIS_TRIGGERRIGHT)>deadzone) and equipementbefore == 0:
+        elif (pyxel.btn(pyxel.MOUSE_BUTTON_LEFT) or pyxel.btn(pyxel.KEY_SPACE) or pyxel.btn(pyxel.GAMEPAD1_BUTTON_A) or pyxel.btnv(pyxel.GAMEPAD1_AXIS_TRIGGERRIGHT)>deadzone) and equipementbefore == 0:
             equipement = __main__.equipements[__main__.player["equipement"]["list"][__main__.player["equipement"]["inhand"]]]['delay']
             if __main__.player["equipement"]["list"][__main__.player["equipement"]["inhand"]]=="pistol":
                 if __main__.player["equipement"]["specialvar"]["ammo"]>0:
