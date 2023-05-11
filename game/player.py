@@ -32,7 +32,7 @@ class Player:
             return False
     class pistol:
         def hitEnemy(bulletx,bullety,enemyx,enemyy):
-            print(enemyx<=bulletx<=enemyx+5, enemyy<=bullety<=enemyy+9)
+            #print(enemyx<=bulletx<=enemyx+5, enemyy<=bullety<=enemyy+9)
             if enemyx<=bulletx<=enemyx+5 and enemyy<=bullety<=enemyy+9:
                 return True
             return False

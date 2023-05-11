@@ -16,6 +16,7 @@ pyxel.mouse(True)
 animationtick = 0
 tick = 0
 lastestchangeitem = 0
+startvalues = {"player":{"x":60,"y":60,"equipement":{"list":["sword"],"inhand":0,"used":False,"delay":0,'specialvar':{'ammo':20,"listbullet":[]}},"dir":"u","score":0,"life":4},"enemies":{"wait":False,"list":[]},"scenary":{"walls":0,"tp":0,"chest":{"state":0,'gift':None,'timegiven':None},"endgame":False}}
 player = {"x":60,"y":60,"equipement":{"list":["sword"],"inhand":0,"used":False,"delay":0,'specialvar':{'ammo':20,"listbullet":[]}},"dir":"u","score":0,"life":4}
 enemies = {"wait":False,"list":[]}
 
@@ -29,7 +30,7 @@ def changeTheZone():
         scenary["chest"]["state"] = 0
     walls, zone = Mecanism.changeZone(zone)
     enemies["list"] = []
-    for i in range(2,zone):
+    for i in range(1,zone):
         enemies["list"].append(Enemy.spawn(walls))
     #print(enemies)
     pyxel.play(3,3)
@@ -38,7 +39,7 @@ def changeTheZone():
 # =========================================================
 def update():
     """Update everything in the game (always at fps)"""
-    global player,animationtick,tick
+    global player,animationtick,tick,zone,scenary,enemies,walls
     # update player vars
     if player["life"]>0:
         if tick == config['fps']: tick = 0
@@ -132,6 +133,13 @@ def update():
             pyxel.stop(0)
             pyxel.play(0,4)
             time.sleep(1)
+        else:
+            if pyxel.btn(pyxel.MOUSE_BUTTON_LEFT) or pyxel.btn(pyxel.KEY_SPACE) or pyxel.btn(pyxel.GAMEPAD1_BUTTON_A) or pyxel.btnv(pyxel.GAMEPAD1_AXIS_TRIGGERRIGHT)>deadzone:
+                zone = 1
+                walls, zone = Mecanism.changeZone(zone)
+                player = startvalues["player"]
+                enemies = startvalues["enemies"]
+                scenary = startvalues["scenary"]
 # =========================================================
 # == DRAW
 # =========================================================
@@ -277,10 +285,13 @@ def draw():
         for bullet in player["equipement"]["specialvar"]["listbullet"]:
             pyxel.pset(bullet['x'],bullet['y'],13)
     
+    # Endgame screen
     if scenary["endgame"]:
         pyxel.rect(16,32,96,33,1)
         pyxel.text(18,34,"Game Over !",7)
         pyxel.text(18,40,str("Your score is :"+str(player["score"])),7)
+        pyxel.text(18,53,"Press the attack button",7)
+        pyxel.text(18,59,"to restart",7)
 
     
 walls, zone = Mecanism.changeZone(zone)
