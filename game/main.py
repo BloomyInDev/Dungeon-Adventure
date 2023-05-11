@@ -11,7 +11,7 @@ equipements = {
     "pistol":{'delay':8 ,'atk':1 ,'wait':8 ,'specialvar':{'ammo':24}}
 }
 pyxel.init(config['screen'][0], config['screen'][1], title="Dungeon Game", fps=config['fps'])
-pyxel.load("resources.pyxres")
+pyxel.load("ressources.pyxres")
 pyxel.mouse(True)
 animationtick = 0
 tick = 0
@@ -130,16 +130,18 @@ def update():
     else:
         if not scenary["endgame"]:
             scenary["endgame"]=True
+            scenary["timeendgame"]=pyxel.frame_count
             pyxel.stop(0)
             pyxel.play(0,4)
             time.sleep(1)
         else:
-            if pyxel.btn(pyxel.MOUSE_BUTTON_LEFT) or pyxel.btn(pyxel.KEY_SPACE) or pyxel.btn(pyxel.GAMEPAD1_BUTTON_A) or pyxel.btnv(pyxel.GAMEPAD1_AXIS_TRIGGERRIGHT)>deadzone:
+            if (pyxel.btn(pyxel.MOUSE_BUTTON_LEFT) or pyxel.btn(pyxel.KEY_SPACE) or pyxel.btn(pyxel.GAMEPAD1_BUTTON_A) or pyxel.btnv(pyxel.GAMEPAD1_AXIS_TRIGGERRIGHT)>deadzone) and pyxel.frame_count>scenary["timeendgame"]+config["fps"]*2:
                 zone = 1
                 walls, zone = Mecanism.changeZone(zone)
-                player = startvalues["player"]
                 enemies = startvalues["enemies"]
+                player = startvalues["player"]
                 scenary = startvalues["scenary"]
+                scenary["endgame"] = False
 # =========================================================
 # == DRAW
 # =========================================================
@@ -290,8 +292,9 @@ def draw():
         pyxel.rect(16,32,96,33,1)
         pyxel.text(18,34,"Game Over !",7)
         pyxel.text(18,40,str("Your score is :"+str(player["score"])),7)
-        pyxel.text(18,53,"Press the attack button",7)
-        pyxel.text(18,59,"to restart",7)
+        if pyxel.frame_count>scenary["timeendgame"]+config["fps"]*2:
+            pyxel.text(18,53,"Press the attack button",7)
+            pyxel.text(18,59,"to restart",7)
 
     
 walls, zone = Mecanism.changeZone(zone)
