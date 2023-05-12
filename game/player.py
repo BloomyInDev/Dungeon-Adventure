@@ -24,13 +24,13 @@ class Player:
         def hitEnemy(playerx,playery,playerdir,enemyx,enemyy):
             match playerdir:
                 case "d" | "u":
-                    if playery-4<enemyy<playery+13 and playerx<enemyx+3<playerx+6:
+                    if playery-14<enemyy<playery+13 and playerx<enemyx+3<playerx+6:
                         return True
                 case "l" | "r":
                     if (playerx-6<enemyx<playerx+11 or playerx-6<enemyx+6<playerx+11) and playery<enemyy+4<playery+9:
                         return True
             return False
-    class pistol:
+    class pistol: 
         def hitEnemy(bulletx,bullety,enemyx,enemyy):
             #print(enemyx<=bulletx<=enemyx+5, enemyy<=bullety<=enemyy+9)
             if enemyx<=bulletx<=enemyx+5 and enemyy<=bullety<=enemyy+9:
