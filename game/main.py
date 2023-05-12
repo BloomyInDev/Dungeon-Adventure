@@ -6,9 +6,10 @@ from mecanism import *
 normalfps = 30
 config={'screen':[128,137],'fps':60}
 equipements = {
-    "sword": {'delay':28,'atk':1 ,'wait':10},
-    "dsword":{'delay':32,'atk':1 ,'wait':12},
-    "pistol":{'delay':8 ,'atk':1 ,'wait':8 ,'specialvar':{'ammo':24}}
+    "sword": {'delay':28,'atk':1 ,'wait':10,'specialvar':{}                        ,'keepvar':{}},
+    "dsword":{'delay':32,'atk':1 ,'wait':12,'specialvar':{}                        ,'keepvar':{}},
+    "pistol":{'delay':8 ,'atk':1 ,'wait':8 ,'specialvar':{'listbullet':[]}         ,'keepvar':{'ammo':24}},
+    "health":{'delay':8 ,'atk':0 ,'wait':8 ,'specialvar':{'delay':config["fps"]*10},'keepvar':{'lasthealth':0}}
 }
 pyxel.init(config['screen'][0], config['screen'][1], title="Dungeon Game", fps=config['fps'])
 pyxel.load("ressources.pyxres")
@@ -16,13 +17,21 @@ pyxel.mouse(True)
 animationtick = 0
 tick = 0
 lastestchangeitem = 0
-startvalues = {"player":{"x":60,"y":60,"equipement":{"list":["sword"],"inhand":0,"used":False,"delay":0,'specialvar':{'ammo':20,"listbullet":[]}},"dir":"u","score":0,"life":4},"enemies":{"wait":False,"list":[]},"scenary":{"walls":0,"tp":0,"chest":{"state":0,'gift':None,'timegiven':None},"endgame":False}}
-player = {"x":60,"y":60,"equipement":{"list":["sword"],"inhand":0,"used":False,"delay":0,'specialvar':{'ammo':20,"listbullet":[]}},"dir":"u","score":0,"life":4}
-enemies = {"wait":False,"list":[]}
-
-scenary = {"walls":0,"tp":0,"chest":{"state":0,'gift':None,'timegiven':None},"endgame":False}
+startvalues = {
+    "player":{"x":60,"y":60,"equipement":{"list":["sword","health"],"inhand":0,"used":False,"delay":0,'specialvar':{},'keepvar':{}},"dir":"u","score":0,"life":4},
+    "enemies":{"wait":False,"list":[]},
+    "scenary":{"walls":0,"tp":0,"chest":{"state":0,'gift':None,'timegiven':None},"endgame":False}
+}
+player = startvalues["player"]
+enemies = startvalues["enemies"]
+scenary = startvalues["scenary"]
 zone = 1
 pyxel.playm(0,loop=True)
+for items in equipements:
+    print(equipements[items])
+    for key in equipements[items]["keepvar"]:
+        player["equipement"]["keepvar"][key] = equipements[items]["keepvar"][key]
+print(player["equipement"]["keepvar"])
 def changeTheZone():
     global walls,zone,enemies
     print(zone)
@@ -83,26 +92,34 @@ def update():
                         i+=1
         else: player["equipement"]["used"] = False
         x=0
-        if player["equipement"]["list"][player["equipement"]["inhand"]] == "pistol":
-            if (pyxel.frame_count//60)%5==1 and tick == 0:
-                player["equipement"]["specialvar"]["ammo"]+=1
-                #print('Ammo now at',player["equipement"]["specialvar"]["ammo"])
-            i=0
-            while i<len(player["equipement"]["specialvar"]["listbullet"]):
-                bullet = player["equipement"]["specialvar"]["listbullet"][i]
-                if bullet['x']<8 or bullet['x']>121 or bullet['y']<8 or bullet['y']>121:
-                    player["equipement"]["specialvar"]["listbullet"].pop(i)
-                else:
-                    match bullet["dir"]:
-                        case "u":
-                            bullet['y']-=1
-                        case "d":
-                            bullet['y']+=1
-                        case "r":
-                            bullet['x']+=1
-                        case "l":
-                            bullet['x']-=1
-                    i+=1
+        if player["equipement"]["list"][player["equipement"]["inhand"]] in ["pistol","health"]:
+            match player["equipement"]["list"][player["equipement"]["inhand"]]:
+                case "pistol":
+                    if (pyxel.frame_count//60)%5==1 and tick == 0:
+                        player["equipement"]["keepvar"]["ammo"]+=1
+                        #print('Ammo now at',player["equipement"]["keepvar"]["ammo"])
+                    i=0
+                    while i<len(player["equipement"]["specialvar"]["listbullet"]):
+                        bullet = player["equipement"]["specialvar"]["listbullet"][i]
+                        if bullet['x']<8 or bullet['x']>121 or bullet['y']<8 or bullet['y']>121:
+                            player["equipement"]["specialvar"]["listbullet"].pop(i)
+                        else:
+                            match bullet["dir"]:
+                                case "u":
+                                    bullet['y']-=1
+                                case "d":
+                                    bullet['y']+=1
+                                case "r":
+                                    bullet['x']+=1
+                                case "l":
+                                    bullet['x']-=1
+                            i+=1
+                case "health":
+                    if not player["equipement"]["keepvar"]["lasthealth"]+player["equipement"]["specialvar"]["delay"]>=pyxel.frame_count:
+                        player["equipement"]["lasthealth"]=pyxel.frame_count
+                        player["life"]+=1
+                        print("coucou je heal")
+                    else: print("coucou je heal pas")
         i = 0
         while i<len(enemies["list"]):
             #print(len(player["equipement"]['specialvar']['listbullet']))
@@ -114,7 +131,7 @@ def update():
                         player["equipement"]['specialvar']['listbullet'].pop(x)
                         enemies["list"].pop(i)
                         player["score"]+=1
-                        player["equipement"]["specialvar"]["ammo"]+=1
+                        player["equipement"]["keepvar"]["ammo"]+=1
                         print("Enemy killed, score at",player["score"],"and Enemy nb at",len(enemies["list"]))
                     else: x+=1
             try:
@@ -171,11 +188,11 @@ def draw():
             pyxel.blt(15,129,0,0,49,16,7,0)
     else:
         # Ammo countdown
-        if player["equipement"]["specialvar"]["ammo"]<21:
-            pyxel.blt(15,129,0,0,49,(player["equipement"]["specialvar"]["ammo"]//1.5),7,0)
+        if player["equipement"]["keepvar"]["ammo"]<21:
+            pyxel.blt(15,129,0,0,49,(player["equipement"]["keepvar"]["ammo"]//1.5),7,0)
         else:
             pyxel.blt(15,129,0,0,49,16,7,0)
-        pyxel.text(18,130,str(player["equipement"]["specialvar"]["ammo"]),5)
+        pyxel.text(18,130,str(player["equipement"]["keepvar"]["ammo"]),5)
     pyxel.text(97-(6*len(str(player["score"]))),130,str('Score : '+str(player["score"])),7)
     # Objects in inv
     xcords = 48
@@ -191,6 +208,9 @@ def draw():
             case "pistol":
                 objpos["pistol"]=xcords
                 pyxel.blt(xcords,129,1,8,16,6,6,0)
+            case "health":
+                objpos["health"]=xcords
+                pyxel.blt(xcords,129,1,24,16,6,6,0)
         xcords+=9
     pyxel.rect(objpos[player["equipement"]["list"][player["equipement"]["inhand"]]],136,7,1,7)
     
@@ -272,16 +292,39 @@ def draw():
                         pyxel.blt(player["x"]+2,player["y"]-4,1,21,5,2,4,0)
                     case "d":
                         pyxel.blt(player["x"]+2,player["y"]+7,1,18,5,3,5,0)
-    elif player["equipement"]["list"][player["equipement"]["inhand"]] == "pistol":
-        match player["dir"]:
-            case "l":
-                pyxel.blt(player["x"]-5,player["y"]+4,1,6,0,6,5,0)
-            case "r":
-                pyxel.blt(player["x"]+5,player["y"]+4,1,12,0,6,5,0)
-            case "u":
-                pyxel.blt(player["x"]+2,player["y"]-4,1,9,5,2,4,0)
-            case "d":
-                pyxel.blt(player["x"]+2,player["y"]+7,1,6,5,3,5,0)
+    elif player["equipement"]["list"][player["equipement"]["inhand"]] in ["pistol","health"]:
+        match player["equipement"]["list"][player["equipement"]["inhand"]]:
+            case "pistol":
+                match player["dir"]:
+                    case "l":
+                        pyxel.blt(player["x"]-5,player["y"]+4,1,6,0,6,5,0)
+                    case "r":
+                        pyxel.blt(player["x"]+5,player["y"]+4,1,12,0,6,5,0)
+                    case "u":
+                        pyxel.blt(player["x"]+2,player["y"]-4,1,9,5,2,4,0)
+                    case "d":
+                        pyxel.blt(player["x"]+2,player["y"]+7,1,6,5,3,5,0)
+            case "health":
+                if not player["equipement"]["keepvar"]["lasthealth"]+player["equipement"]["specialvar"]["delay"]>=pyxel.frame_count:
+                    match player["dir"]:
+                        case "l":
+                            pyxel.blt(player["x"]-3,player["y"]+4,1,31,0,4,5,0)
+                        case "r":
+                            pyxel.blt(player["x"]+5,player["y"]+4,1,31,0,4,5,0)
+                        case "u":
+                            pyxel.blt(player["x"]+1,player["y"]-1,1,31,0,4,1,0)
+                        case "d":
+                            pyxel.blt(player["x"]+1,player["y"]+5,1,31,0,4,5,0)
+                else:
+                    match player["dir"]:
+                        case "l":
+                            pyxel.blt(player["x"]-3,player["y"]+4,1,35,0,4,5,0)
+                        case "r":
+                            pyxel.blt(player["x"]+5,player["y"]+4,1,35,0,4,5,0)
+                        case "u":
+                            pyxel.blt(player["x"]+1,player["y"]-1,1,35,0,4,1,0)
+                        case "d":
+                            pyxel.blt(player["x"]+1,player["y"]+5,1,35,0,4,5,0)
     # Pistol Bullet
     if player["equipement"]["list"][player["equipement"]["inhand"]] == "pistol":
         for bullet in player["equipement"]["specialvar"]["listbullet"]:

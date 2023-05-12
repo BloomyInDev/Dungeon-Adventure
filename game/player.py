@@ -46,6 +46,8 @@ class Player:
                     bullets.append({'x':playerx+10,'y':playery+5,'dir':dir})
                 case 'l':
                     bullets.append({'x':playerx-5,'y':playery+5,'dir':dir})
+    def updateSpeVar():
+        __main__.player["equipement"]["specialvar"] = __main__.equipements[__main__.player["equipement"]["list"][__main__.player["equipement"]["inhand"]]]["specialvar"]
     def isColiding(x,y,walls):
         try:
             if walls[(y+2)//8][x//8]==1:
@@ -88,7 +90,7 @@ class Player:
                     __main__.player["equipement"]["list"].append("pistol")
                     __main__.player["equipement"]["inhand"]=len(__main__.player["equipement"]["list"])-1
                 else:
-                    __main__.player["equipement"]["specialvar"]["ammo"]+=1
+                    __main__.player["equipement"]["keepvar"]["ammo"]+=1
             case "dsword":
                 if not("dsword" in __main__.player["equipement"]["list"]):
                     __main__.player["equipement"]["list"].append("dsword")
@@ -96,7 +98,12 @@ class Player:
                 else:
                     Player.lootChest(chestscene)
             case "health":
-                __main__.player["life"]+=1
+                if not("health" in __main__.player["equipement"]["list"]):
+                    __main__.player["equipement"]["list"].append("health")
+                    __main__.player["equipement"]["inhand"]=len(__main__.player["equipement"]["list"])-1
+                else:
+                    __main__.player["life"]+=1
+        
 
         return chestscene
     def move(x, y, equipementbefore, dir, walls, chestscene):
@@ -135,6 +142,7 @@ class Player:
                     __main__.player["equipement"]["inhand"]=len(__main__.player["equipement"]["list"])-1
                 else:
                     __main__.player["equipement"]["inhand"]-=1
+            Player.updateSpeVar()
             #print(__main__.player["equipement"]["list"][__main__.player["equipement"]["inhand"]])
         if (pyxel.btn(pyxel.GAMEPAD1_BUTTON_LEFTSHOULDER) or pyxel.btn(pyxel.KEY_E) or pyxel.btn(pyxel.GAMEPAD1_BUTTON_X)) and pyxel.frame_count-__main__.lastestchangeitem>delaybetweenchanges:
             __main__.lastestchangeitem = pyxel.frame_count
@@ -142,6 +150,7 @@ class Player:
                 __main__.player["equipement"]["inhand"]=len(__main__.player["equipement"]["list"])-1
             else:
                 __main__.player["equipement"]["inhand"]-=1
+            Player.updateSpeVar()
             #print(__main__.player["equipement"]["list"][__main__.player["equipement"]["inhand"]])
         if (pyxel.btn(pyxel.GAMEPAD1_BUTTON_RIGHTSHOULDER) or pyxel.btn(pyxel.KEY_R) or pyxel.btn(pyxel.GAMEPAD1_BUTTON_Y)) and pyxel.frame_count-__main__.lastestchangeitem>delaybetweenchanges:
             __main__.lastestchangeitem = pyxel.frame_count
@@ -149,18 +158,24 @@ class Player:
                 __main__.player["equipement"]["inhand"]=0
             else:
                 __main__.player["equipement"]["inhand"]+=1
+            Player.updateSpeVar()
             #print(__main__.player["equipement"]["list"][__main__.player["equipement"]["inhand"]])
         # Player's sword
         if (pyxel.btn(pyxel.MOUSE_BUTTON_LEFT) or pyxel.btn(pyxel.KEY_SPACE) or pyxel.btn(pyxel.GAMEPAD1_BUTTON_A) or pyxel.btnv(pyxel.GAMEPAD1_AXIS_TRIGGERRIGHT)>deadzone) and Player.colidingChest(x,y,chestscene['state']):
             chestscene = Player.lootChest(chestscene)
             equipement = 0
+            Player.updateSpeVar()
         elif (pyxel.btn(pyxel.MOUSE_BUTTON_LEFT) or pyxel.btn(pyxel.KEY_SPACE) or pyxel.btn(pyxel.GAMEPAD1_BUTTON_A) or pyxel.btnv(pyxel.GAMEPAD1_AXIS_TRIGGERRIGHT)>deadzone) and equipementbefore == 0:
             equipement = __main__.equipements[__main__.player["equipement"]["list"][__main__.player["equipement"]["inhand"]]]['delay']
             if __main__.player["equipement"]["list"][__main__.player["equipement"]["inhand"]]=="pistol":
-                if __main__.player["equipement"]["specialvar"]["ammo"]>0:
+                if __main__.player["equipement"]["keepvar"]["ammo"]>0:
                     Player.pistol.shootBullet(__main__.player["equipement"]["specialvar"]["listbullet"],dir,x,y)
-                    __main__.player["equipement"]["specialvar"]["ammo"]-=1
+                    __main__.player["equipement"]["keepvar"]["ammo"]-=1
                     pyxel.play(3,2)
+            elif __main__.player["equipement"]["list"][__main__.player["equipement"]["inhand"]]=="health":
+                if __main__.player["equipement"]["keepvar"]["lasthealth"]>=__main__.player["equipement"]["specialvar"]["delay"]+pyxel.frame_count:
+                    __main__.player["equipement"]["keepvar"]["lasthealth"] = pyxel.frame_count
+                    __main__.player["health"]+=1
             else:
                 pass
         elif equipementbefore !=0 : equipement = equipementbefore-1

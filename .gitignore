@@ -160,3 +160,4 @@ cython_debug/
 #.idea/
 *.pyxapp
 game/game.html
+game/builder/game.html
