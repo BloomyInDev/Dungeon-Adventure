@@ -1,5 +1,5 @@
 # Dungeon-Adventure
-This is a little school project that i have the idea 
+This is a little school project that i have the idea what to do with
 
 # The differents parts of this project
 ## The game
