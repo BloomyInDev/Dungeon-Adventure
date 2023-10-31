@@ -14,3 +14,4 @@ Thanks to some people that helped me on this game:
 * [ByOrage](https://github.com/byorage) for the pistol drawing and most of the sounds
 * Marin for the player skin
 * My friends for testing the game and giving feedback
+* [greatdocbrown](https://greatdocbrown.itch.io/) for his [Gamepad UI](https://greratdocbrown.itch.io/gamepad-ui) pack
